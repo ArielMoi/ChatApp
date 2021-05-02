@@ -2,7 +2,7 @@ const path = require("path");
 const http = require("http");
 const socketio = require("socket.io");
 const express = require("express");
-const Filter = require('bad-words')
+const Filter = require("bad-words");
 const {
   generateMessage,
   generateLocationMessage,
@@ -17,20 +17,25 @@ const publicDirectoryPath = path.join(__dirname, "../public");
 
 app.use(express.static(publicDirectoryPath));
 
-io.on("connection", (socket) => {// socket is an object that contains info on the connection
+io.on("connection", (socket) => {
+  // socket is an object that contains info on the connection
   console.log("new webSocket connection");
 
-  socket.emit("message", generateMessage("generateMessage")); // socket emit to current user
-  socket.broadcast.emit("message", generateMessage("a new user joined"));
+  socket.on("join", ({ username, room }) => {
+    socket.join(room);
+
+    socket.emit("message", generateMessage("you entered chat")); // socket emit to current user
+    socket.broadcast.to(room).emit("message", generateMessage(`${username} has joined the chat`));
+  });
 
   socket.on("message", (msg, callback) => {
     const filter = new Filter();
 
-    if(filter.isProfane(msg)){
-        return callback('bad words')
+    if (filter.isProfane(msg)) {
+      return callback("bad words");
     }
 
-    io.emit("message", generateMessage(msg)); // io emit to all connected clients
+    io.to('a').emit("message", generateMessage(msg)); // io emit to all connected clients
     callback();
   });
 
@@ -39,9 +44,9 @@ io.on("connection", (socket) => {// socket is an object that contains info on th
     callback();
   });
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     io.emit("message", "user has left");
-  })
+  });
 });
 
 server.listen(port, () => {

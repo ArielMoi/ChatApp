@@ -5,6 +5,10 @@ const messagesElement = document.querySelector("#messages");
 // templated
 const messageTemplate = document.querySelector("#message-template").innerHTML; // to get the html data and not script
 
+//options
+
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true}) // ignoreQueryPrefix to hide ?
+
 socket.on("message", (msg) => {
   console.log(msg);
 
@@ -57,3 +61,5 @@ document.querySelector("#send-location").addEventListener("click", () => {
     );
   });
 });
+
+socket.emit('join', {username, room})
