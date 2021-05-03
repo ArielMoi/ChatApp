@@ -11,25 +11,36 @@
 <body>
     Chat App
 
+    <div id='sidebar'></div>
     <div id='messages'></div>
 
 
     <form class='message-from'>
-        <input name='message' type='text' placeholder="message" />
+        <input name='message' type='text' placeholder="message" required autocomplete="off" />
         <button type='submit'>send</button>
     </form>
     <button id='send-location'>send location</button>
 
     <script id="message-template" type='text/html'>
         <div>
-            <p>{{createdAt}} - {{message}}</p>    
+            <p>{{username}},{{createdAt}} - {{message}}</p>    
         </div>
     </script>
 
     <script id="location-template" type='text/html'>
         <div>
-            <a href={{location}}>{{createdAt}} - current location</a>   
+            <a href={{location}}>{{username}},{{createdAt}} - current location</a>   
         </div>
+    </script>
+
+    <script id='room-data' type='text/html'>
+        <h2> {{ room }}</h2>
+        <h3>users</h3>
+        <ul class='users'>
+            {{#users}}
+            <li>{{username}}</li>
+            {{/users}}
+        </ul>
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
